@@ -1,0 +1,89 @@
+<canvas id="canvas" width="640" height="480"></canvas>
+
+<script>
+  // Initialize variables
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let playerX = canvas.width / 2;
+  let playerY = canvas.height / 2;
+  let playerAngle = 0;
+  let playerSpeed = 5;
+  let enemies = [];
+  let bullets = [];
+  let playerImage = new Image();
+  let enemyImage = new Image();
+  let bulletImage = new Image();
+  playerImage.src = 'player.png';
+  enemyImage.src = 'enemy.png';
+  bulletImage.src = 'bullet.png';
+
+  // Define the Player and Enemy classes
+  class Player {
+    draw() {
+      ctx.save();
+      ctx.translate(playerX, playerY);
+      ctx.rotate(playerAngle);
+      ctx.drawImage(playerImage, -playerImage.width / 2, -playerImage.height / 2);
+      ctx.restore();
+    }
+  }
+
+  class Enemy {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.speed = 5;
+    }
+
+    move() {
+      this.x += randomInt(-this.speed, this.speed);
+      this.y += randomInt(-this.speed, this.speed);
+    }
+
+    draw() {
+      ctx.drawImage(enemyImage, this.x, this.y);
+    }
+  }
+
+  // Define the Bullet class
+  class Bullet {
+    constructor(x, y, angle) {
+      this.x = x;
+      this.y = y;
+      this.angle = angle;
+      this.speed = 10;
+    }
+
+    move() {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+    }
+
+    draw() {
+      ctx.drawImage(bulletImage, this.x, this.y);
+    }
+  }
+
+  // Create the player and enemy objects
+  const player = new Player();
+  for (let i = 0; i < 5; i++) {
+    enemies.push(new Enemy(randomInt(0, canvas.width), randomInt(0, canvas.height)));
+  }
+
+  // Main game loop
+  function gameLoop() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Handle key presses
+    document.addEventListener('keydown', event => {
+      switch (event.key) {
+        case 'ArrowLeft':
+          playerAngle -= Math.PI / 180;
+          break;
+        case 'ArrowRight':
+          playerAngle += Math.PI / 180;
+          break;
+        case 'ArrowUp':
+          playerX += Math.cos(playerAngle) * playerSpeed;
+          playerY +=
